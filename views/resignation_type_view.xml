@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_resignation_type_tree" model="ir.ui.view">
+        <field name="name">resignation.type.tree.view</field>
+        <field name="model">resignation.type</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_resignation_type_form" model="ir.ui.view">
+        <field name="name">resignation.type.form.view</field>
+        <field name="model">resignation.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="vp_id"/>
+                            <field name="hr_id"/>
+                            <field name="md_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_resignation_type" model="ir.actions.act_window">
+        <field name="name">Employee Resignation Type</field>
+        <field name="res_model">resignation.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

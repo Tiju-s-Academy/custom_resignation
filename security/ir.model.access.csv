@@ -1,0 +1,17 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_resignation_admin,employee resignation admin,model_employee_resignation,group_admin,1,1,1,1
+access_resignation_type_admin,employee resignation type admin,model_resignation_type,group_admin,1,1,1,1
+
+access_resignation_vp_hr,employee resignation vp hr,model_employee_resignation,group_vp_hr,1,1,1,0
+access_resignation_type_vp_hr,employee resignation type vp hr,model_resignation_type,group_vp_hr,1,1,0,0
+
+access_resignation_manager,employee resignation manager,model_employee_resignation,group_manager,1,1,1,0
+access_resignation_type_manager,employee resignation type manager,model_resignation_type,group_manager,1,1,0,0
+
+access_resignation_user,employee resignation user,model_employee_resignation,group_user,1,1,1,0
+access_resignation_type_user,employee resignation type user,model_resignation_type,group_user,1,1,0,0
+
+
+
+
+

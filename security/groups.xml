@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="resignation_groups" model="ir.module.category">
+        <field name="name">Resignation</field>
+        <field name="sequence">100</field>
+    </record>
+    <record id="group_admin" model="res.groups">
+        <field name="name">Admin</field>
+        <field name="category_id" ref="custom_resignation.resignation_groups"/>
+    </record>
+    <record id="group_vp_hr" model="res.groups">
+        <field name="name">VP/HR: Manage all Requests</field>
+        <field name="category_id" ref="custom_resignation.resignation_groups"/>
+    </record>
+    <record id="group_manager" model="res.groups">
+        <field name="name">Manager: Manage the request under their</field>
+        <field name="category_id" ref="custom_resignation.resignation_groups"/>
+    </record>
+    <record id="group_user" model="res.groups">
+        <field name="name">User: Show own details</field>
+        <field name="category_id" ref="custom_resignation.resignation_groups"/>
+    </record>
+</odoo>
+

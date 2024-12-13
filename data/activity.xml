@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data noupdate="1">
+        <record id="mail_activity_resignation" model="mail.activity.type">
+            <field name="name">Resignation Approval</field>
+            <field name="summary">Resignation Follow-up</field>
+            <field name="res_model">employee.resignation</field>
+            <field name="delay_count">30</field>
+        </record>
+    </data>
+</odoo>
