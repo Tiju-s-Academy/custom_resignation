@@ -3,7 +3,11 @@
     <menuitem id="resignation_menu_root"
               name="Resignation"
               web_icon="custom_resignation,static/description/icon.png"/>
-    <menuitem id="resignation_menu" name="Resignation" action="action_resignation" parent="resignation_menu_root"/>
-    <menuitem id="resignation_type_menu" name="Resignation Type" action="action_resignation_type"
-              parent="resignation_menu_root" groups="custom_resignation.group_admin"/>
+    <menuitem id="resignation_menu" name="Resignation" action="action_resignation" parent="resignation_menu_root" sequence="1"/>
+    <menuitem id="termination_menu" name="Termination" action="action_termination" parent="resignation_menu_root"
+              groups="custom_resignation.group_admin,custom_resignation.group_vp_hr,custom_resignation.group_manager" sequence="2"/>
+    <menuitem id="resignation_type_menu" name="Type" action="action_resignation_type"
+              parent="resignation_menu_root" groups="custom_resignation.group_admin" sequence="3"/>
 </odoo>
+
+

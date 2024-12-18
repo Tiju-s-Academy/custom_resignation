@@ -11,6 +11,10 @@ access_resignation_type_manager,employee resignation type manager,model_resignat
 access_resignation_user,employee resignation user,model_employee_resignation,group_user,1,1,1,0
 access_resignation_type_user,employee resignation type user,model_resignation_type,group_user,1,1,0,0
 
+access_termination_admin,employee termination admin,model_employee_termination,group_admin,1,1,1,1
+access_termination_vp_hr,employee termination vp hr,model_employee_termination,group_vp_hr,1,1,1,0
+access_termination_manager,employee termination manager,model_employee_termination,group_manager,1,1,1,0
+
 
 
 

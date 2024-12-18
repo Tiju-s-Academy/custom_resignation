@@ -18,8 +18,8 @@
                     <group>
                         <group>
                             <field name="name"/>
-                            <field name="vp_id"/>
                             <field name="hr_id"/>
+                            <field name="vp_id"/>
                             <field name="md_ids" widget="many2many_tags"/>
                         </group>
                     </group>

@@ -12,6 +12,7 @@
         'security/ir.model.access.csv',
         'views/resignation_type_view.xml',
         'views/resignation_view.xml',
+        'views/termination_view.xml',
         'views/resignation_menu.xml',
     ],
     'application': True,

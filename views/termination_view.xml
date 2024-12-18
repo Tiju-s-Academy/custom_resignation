@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-    <record id="view_resignation_tree" model="ir.ui.view">
-        <field name="name">resignation.tree.view</field>
-        <field name="model">employee.resignation</field>
+    <record id="view_termination_tree" model="ir.ui.view">
+        <field name="name">termination.tree.view</field>
+        <field name="model">employee.termination</field>
         <field name="arch" type="xml">
             <tree>
                 <field name="serial_number"/>
@@ -19,12 +19,11 @@
             </tree>
         </field>
     </record>
-    <record id="view_resignation_form" model="ir.ui.view">
-        <field name="name">resignation.form.view</field>
-        <field name="model">employee.resignation</field>
+    <record id="view_termination_form" model="ir.ui.view">
+        <field name="name">termination.form.view</field>
+        <field name="model">employee.termination</field>
         <field name="arch" type="xml">
-            <form string="resignation">
-                <field name="is_admin" invisible="1"/>
+            <form string="Termination">
                 <field name="can_approve" invisible="1"/>
                 <header>
                     <button name="action_submit" type="object" string="Submit" class="btn-primary"
@@ -45,31 +44,23 @@
                     </div>
                     <group>
                         <group>
-                            <field name="employee_id" readonly="not is_admin"/>
+                            <field name="employee_id" required="1"/>
                             <field name="department_id"/>
                         </group>
                         <group>
-                            <field name="parent_id"/>
+                            <field name="parent_id" required="1"/>
                             <field name="approved_date" readonly="1"/>
-                            <field name="notice_period" readonly="1"/>
                         </group>
                     </group>
                     <group>
                         <group>
-                            <field name="resignation_type" required="true"/>
+                            <field name="resignation_type" readonly="1" required="1"/>
                         <field name="reason"/>
                         </group>
                         <group>
                         </group>
                     </group>
                     <notebook>
-<!--                    <page string="Custody Details">-->
-<!--                        <field name="custody_details">-->
-<!--                            <tree>-->
-<!--                                <field name="property_id"/>-->
-<!--                            </tree>-->
-<!--                        </field>-->
-<!--                    </page>-->
                 </notebook>
                 </sheet>
                 <div class="oe_chatter">
@@ -80,9 +71,9 @@
             </form>
         </field>
     </record>
-    <record id="action_resignation" model="ir.actions.act_window">
+    <record id="action_termination" model="ir.actions.act_window">
         <field name="name">Employee Resignation</field>
-        <field name="res_model">employee.resignation</field>
+        <field name="res_model">employee.termination</field>
         <field name="view_mode">tree,form</field>
     </record>
 </odoo>

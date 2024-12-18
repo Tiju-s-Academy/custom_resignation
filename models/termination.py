@@ -2,27 +2,18 @@ from odoo import api, fields, models,_
 from odoo.exceptions import UserError
 
 
-class EmployeeResignation(models.Model):
-    _name = 'employee.resignation'
-    _description = 'Employee Resignation'
+class EmployeeTermination(models.Model):
+    _name = 'employee.termination'
+    _description = 'Termination'
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    _rec_name = 'serial_number'
-    _sql_constraints = [('employee_id_unique', 'unique(employee_id)', 'This Employee already requested for Resignation')]
+    _sql_constraints = [
+        ('employee_id_unique', 'unique(employee_id)', 'This Employee already under for Termination')]
 
-    serial_number = fields.Char(
-        string='New',
-        default=lambda self: self.env['ir.sequence'].next_by_code('resignation'),
-        copy=False,
-        readonly=True
-    )
-    employee_id = fields.Many2one(
-        'hr.employee',
-        string='Employee',
-        default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.user.id)], limit=1)
-    )
-    parent_id = fields.Many2one('hr.employee', string='Responsible Person', compute='_compute_department_id', store=True)
-    approved_date = fields.Date(string='Approved Last Date',readonly=1)
-    notice_period = fields.Char("Notice Period", default='3 Months')
+    serial_number = fields.Char(string='New', copy=False)
+    employee_id = fields.Many2one('hr.employee',string='Employee',required=True)
+    parent_id = fields.Many2one('hr.employee', string='Responsible Person', compute='_compute_department_id',
+                                store=True)
+    approved_date = fields.Date(string='Approved Last Date', readonly=1)
     state = fields.Selection(
         selection=[
             ('draft', 'Draft'),
@@ -35,23 +26,23 @@ class EmployeeResignation(models.Model):
         string='Status',
         tracking=True
     )
-    resignation_type = fields.Many2one('resignation.type', string='Type',required=True)
+    resignation_type = fields.Many2one('resignation.type',compute='_compute_resignation_type',readonly=True)
     reason = fields.Text(string='Reason')
 
-    approvers = fields.Many2many('res.users','Approvers', string='Approvers', readonly=True, tracking=True)
+    approvers_ids = fields.Many2many('res.users', 'TerminationApprovers', string='Approvers', readonly=True, tracking=True)
     can_approve = fields.Boolean(compute='_compute_can_approve', string='Can Approve')
 
     manager_id = fields.Many2one('res.users', string='Manager')
     hr_id = fields.Many2one('res.users', string='Hr')
     vp_id = fields.Many2one('res.users', string='Vp')
-    md_ids = fields.Many2many('res.users','Md', string='Md')
-
+    md_ids = fields.Many2many('res.users', 'ceo', string='ceo')
+    #
     manager_approved = fields.Boolean(string='Manager Approved', default=False)
     hr_approved = fields.Boolean(string='HR Approved', default=False)
     vp_approved = fields.Boolean(string='VP Approved', default=False)
     md_approved = fields.Boolean(string='MD Approved', default=False)
 
-    @api.depends('state', 'approvers')
+    @api.depends('state', 'approvers_ids')
     def _compute_can_approve(self):
         current_user = self.env.user
         for record in self:
@@ -79,12 +70,6 @@ class EmployeeResignation(models.Model):
             else:
                 record.can_approve = False
 
-    is_admin = fields.Boolean(string='Is Admin', compute='_compute_is_admin', store=False)
-
-    def _compute_is_admin(self):
-        for record in self:
-            record.is_admin = self.env.user.has_group('custom_resignation.group_admin')
-
     department_id = fields.Many2one('hr.department', string='Department', compute='_compute_department_id', store=True)
 
     @api.depends('employee_id')
@@ -97,38 +82,36 @@ class EmployeeResignation(models.Model):
                 record.department_id = False
                 record.parent_id = False
 
+    @api.depends('employee_id')
+    def _compute_resignation_type(self):
+        self.resignation_type = self.env['resignation.type'].search([('name','=','Termination')])
+
     def action_submit(self):
-        print(self.resignation_type)
-        print(self.resignation_type.name)
-        if self.resignation_type.name == 'Termination':
-            print("yes")
-            self.resignation_type = ''
-            raise UserError(_('You can not terminate your self.'))
-        else:
-            custody = self.env['custody'].sudo().search(
-                ['&', ('employee_id', '=', self.employee_id.id), ('return_date', '=', None)])
-            print(custody)
-            if not custody.id:
-                print("its not checking")
-                self.state = 'submitted'
-                parent_user_id = self.parent_id.user_id.id
-                self.activity_schedule(
-                    'custom_timeoff.mail_activity_timeoff',
-                    user_id=parent_user_id,
-                )
-                return {
-                    'effect': {
-                        'fadeout': 'slow',
-                        'message': 'You Submitted Resignation',
-                        'type': 'rainbow_man',
-                    }
+        custody = self.env['custody'].sudo().search(
+            ['&', ('employee_id', '=', self.employee_id.id), ('return_date', '=', None)])
+        print(custody)
+        if not custody.id:
+            print("its not checking")
+            self.state = 'submitted'
+            parent_user_id = self.parent_id.user_id.id
+            self.activity_schedule(
+                'custom_timeoff.mail_activity_timeoff',
+                user_id=parent_user_id,
+            )
+            self.serial_number = self.env['ir.sequence'].next_by_code('termination')
+            return {
+                'effect': {
+                    'fadeout': 'slow',
+                    'message': 'Employee Termination Submitted',
+                    'type': 'rainbow_man',
                 }
-            else:
-                raise UserError(_('You should return company property at first'))
+            }
+        else:
+            raise UserError(_('You should return company property at first'))
 
     def action_approve(self):
         current_user = self.env.user
-        if current_user in self.approvers:
+        if current_user in self.approvers_ids:
             raise UserError("You have already approved this request.")
 
         # Manager Approval
@@ -168,7 +151,7 @@ class EmployeeResignation(models.Model):
                 return {
                     'effect': {
                         'fadeout': 'slow',
-                        'message': 'Resignation Approved',
+                        'message': 'Employee Terminated',
                         'type': 'rainbow_man',
                     }
                 }
@@ -204,7 +187,7 @@ class EmployeeResignation(models.Model):
                 return {
                     'effect': {
                         'fadeout': 'slow',
-                        'message': 'Resignation Approved',
+                        'message': 'Employee Terminated',
                         'type': 'rainbow_man',
                     }
                 }
@@ -212,7 +195,7 @@ class EmployeeResignation(models.Model):
             print("vp try to unlink activity")
 
             activity_ids = self.activity_ids
-            print("activity",activity_ids)
+            print("activity", activity_ids)
             if activity_ids:
                 activity_ids.unlink()
             # create  activity for md
@@ -242,12 +225,12 @@ class EmployeeResignation(models.Model):
             return {
                 'effect': {
                     'fadeout': 'slow',
-                    'message': 'Resignation Approved',
+                    'message': 'Employee Terminated',
                     'type': 'rainbow_man',
                 }
             }
 
-        self.approvers = [(4, current_user.id)]
+        self.approvers_ids = [(4, current_user.id)]
 
     def action_refuse(self):
         for rec in self:
@@ -257,13 +240,3 @@ class EmployeeResignation(models.Model):
             rec.hr_approved = False
             rec.vp_approved = False
             rec.md_approved = False
-
-
-
-
-
-
-
-
-
-
